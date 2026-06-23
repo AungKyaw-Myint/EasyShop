@@ -22,4 +22,10 @@ public class GlobalExceptionHandler {
 
         throw new ResponseStatusException(HttpStatus.NOT_FOUND);
     }
+
+    @ExceptionHandler(ProfileDataNotFoundException.class)
+    public Product handleProfileDataNotFound(ProfileDataNotFoundException ex) {
+
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+    }
 }

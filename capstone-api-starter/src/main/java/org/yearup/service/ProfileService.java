@@ -18,4 +18,21 @@ public class ProfileService
     {
         return profileRepository.save(profile);
     }
+
+    public Profile getProfile(int userId){
+        return profileRepository.findById(userId).orElse(null);
+    }
+
+    public Profile updateProfile(int userId, Profile profile){
+
+        Profile existingProfile= profileRepository.findById(userId).orElse(null);
+
+        if(existingProfile != null){
+            profile.setUserId(existingProfile.getUserId());
+
+            return profileRepository.save(profile);
+        }
+
+        return null;
+    }
 }

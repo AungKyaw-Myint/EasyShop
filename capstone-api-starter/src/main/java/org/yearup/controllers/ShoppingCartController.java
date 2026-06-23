@@ -69,10 +69,13 @@ public class ShoppingCartController
     // https://localhost:8080/cart  - return the (now empty) cart so the front end can refresh it (200 OK)
     @DeleteMapping("")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<Void> clearShoppingCart(Principal principal){
+    public ResponseEntity<ShoppingCart> clearShoppingCart(Principal principal){
         int userId=getUserId(principal);
         shoppingCartService.clearCart(userId);
-        return ResponseEntity.noContent().build();
+
+        ShoppingCart cart = shoppingCartService.getByUserId(userId);
+
+        return ResponseEntity.ok(cart);
     }
 
     private int getUserId(Principal principal){
