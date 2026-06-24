@@ -5,17 +5,18 @@ import org.aspectj.weaver.ast.Or;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.yearup.exception.CartItemNotFoundException;
+import org.yearup.exception.InsufficientStockException;
 import org.yearup.exception.ProfileDataNotFoundException;
-import org.yearup.models.Order;
-import org.yearup.models.OrderDetails;
-import org.yearup.models.Profile;
-import org.yearup.models.ShoppingCart;
+import org.yearup.models.*;
 import org.yearup.repository.OrderDetailsRepository;
 import org.yearup.repository.OrderRepository;
+import org.yearup.repository.ProductRepository;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class OrderService {
@@ -32,6 +33,8 @@ public class OrderService {
     @Autowired
     private ProfileService profileService;
 
+    @Autowired
+    private ProductRepository productRepository;
 
     @Transactional
     public Order order(int userId){
@@ -54,7 +57,11 @@ public class OrderService {
 
         Order savedOrder=orderRepository.save(order);
 
+        // Save data for the order detail
         List<OrderDetails> orderDetailsList= new ArrayList<>();
+
+        // Product quantity variable to reduce each product after order
+        Map<Integer, Integer> quantityMap = new HashMap<>();
 
         cart.getItems().values()
                 .forEach(cartItem -> {
@@ -65,12 +72,31 @@ public class OrderService {
                         orderDetails.setQuantity(cartItem.getQuantity());
                         orderDetails.setDiscount(cartItem.getDiscountPercent());
 
+                        quantityMap.put(cartItem.getProductId(), cartItem.getQuantity());
+
                         orderDetailsList.add(orderDetails);
                 });
 
         orderDetailsRepository.saveAll(orderDetailsList);
 
         shoppingCartService.clearCart(userId);
+
+
+        // Product Reduce after order process
+        List<Product> products =
+                productRepository.findAllById(quantityMap.keySet());
+
+        for (Product product : products) {
+            Integer qty = quantityMap.get(product.getProductId());
+            if (product.getStock() < qty) {
+                throw new InsufficientStockException(
+                        "Not enough stock for product: " + product.getName()
+                );
+            }
+            product.setStock(product.getStock() - qty);
+        }
+
+        productRepository.saveAll(products);
 
         return savedOrder;
     }
@@ -81,7 +107,6 @@ public class OrderService {
                         isBlank(profile.getLastName()) &&
                         isBlank(profile.getPhone()) &&
                         isBlank(profile.getEmail()) &&
-                        isBlank(profile.getAddress()) &&
                         isBlank(profile.getCity()) &&
                         isBlank(profile.getState()) &&
                         isBlank(profile.getZip());

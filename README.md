@@ -1,34 +1,90 @@
-# Spring Boot Application
+# 🛍️ Easy Shop - Online Shopping (Spring Boot)
 
-## Overview
-Brief description of the project.
+Easy Shop is a backend REST API for an online shopping platform built using **Spring Boot**.  
+It supports user authentication, product browsing, search/filtering, cart management, and order checkout.
 
-Example:
-This is a Spring Boot REST API for managing employee records. It provides CRUD operations and uses MySQL as the database.
+The frontend UI is pre-built and fully functional. All development work is focused on the backend API.
 
-## Features
-- Create, Read, Update, Delete operations
-- RESTful APIs
-- Database integration with MySQL
-- Spring Security authentication
-- Exception handling
+---
 
-## Technologies Used
-- Java 17
-- Spring Boot 3.x
+## 📌 Application Features
+
+### 👤 User Management
+- User registration and login
+- Role-based users (User / Admin)
+
+---
+
+### 📦 Product Management
+- View all products
+- Browse products by category
+- View product details (price, description, stock, etc.)
+- Products grouped under categories
+
+---
+
+### 🔎 Search & Filter (Bug Fix Area)
+- Search products by name or keyword
+- Filter products by:
+    - Category
+    - Price range
+    - Stock availability
+
+---
+
+### 🛒 Shopping Cart
+- Add products to cart
+- Update quantity
+- Remove items from cart
+- View user-specific cart items
+
+---
+
+### 💳 Orders & Checkout
+- Place orders from cart
+- Order summary creation
+- Stores:
+    - Order date
+    - Shipping address
+    - Shipping cost
+    - Order items
+
+---
+
+## 📌 Project Highlights
+
+- RESTful API development using Spring Boot
+- Layered architecture (Controller, Service, Repository)
+- Spring Data JPA for database operations
+- Input validation and error handling
+- Environment-based configuration support
+- Unit and integration testing
+
+---
+
+## 🛠️ Tech Stack
+
+- Java 17+
+- Spring Boot
+- Spring Web
 - Spring Data JPA
-- Spring Security
+- Hibernate
 - Maven
-- MySQL
+- MySQL / H2 Database (configurable)
 
-## Prerequisites
+---
+
+## ⚙️ Prerequisites
+
 Before running the application, ensure you have:
 
 - Java JDK 17 or later
 - Maven 3.8+
 - MySQL 8.0+
 
-## Installation
+---
+
+## 🚀 Installation
 
 ### Clone the repository
 

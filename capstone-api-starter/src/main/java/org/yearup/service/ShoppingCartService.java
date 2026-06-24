@@ -3,6 +3,7 @@ package org.yearup.service;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 import org.yearup.exception.CartItemNotFoundException;
+import org.yearup.exception.InsufficientStockException;
 import org.yearup.exception.ProductNotFoundException;
 import org.yearup.models.*;
 import org.yearup.repository.ProductRepository;
@@ -75,6 +76,8 @@ public class ShoppingCartService
 
         // Find by product ID, throw error if not found
         Product product= productRepository.findById(id).orElseThrow(() -> new ProductNotFoundException("Product Not Found"));
+        // Quantity check
+        if(upateQuantity >= product.getStock()) throw new InsufficientStockException("Quantity are not avaliable!");
 
         if(product != null){
             // Find cart item list according to user id
@@ -87,7 +90,9 @@ public class ShoppingCartService
                     .findFirst()
                     .ifPresentOrElse(
                             item -> {
-                                item.setQuantity(upateQuantity == 0 ? item.getQuantity() + 1 : upateQuantity);
+                                int newQuantity=upateQuantity == 0 ? item.getQuantity() + 1 : upateQuantity;
+                                if(newQuantity > product.getStock()) throw new InsufficientStockException("Quantity are not avaliable!");
+                                item.setQuantity(newQuantity);
                                 shoppingCartRepository.save(item);
                             },
                             () -> {
